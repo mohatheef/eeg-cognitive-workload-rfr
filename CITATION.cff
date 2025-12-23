@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "EEG-Based Cognitive Workload Estimation using Random Forest Regression"
+version: v1.0.0
+date-released: 2025-12-23
+doi: 10.5281/zenodo.18033145
+url: https://github.com/mohatheef/eeg-cognitive-workload-rfr
+
+authors:
+  - family-names: G A
+    given-names: Mohammed Atheef
+    affiliation: Department of Biomedical Engineering, Manipal Institute of Technology, MAHE

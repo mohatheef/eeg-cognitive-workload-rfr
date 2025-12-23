@@ -1,7 +1,3 @@
-# eeg-cognitive-workload-rfr
-
-
-
 # EEG-Based Cognitive Workload Estimation using Random Forest Regression
 
 This repository contains the Python implementation used in the study:
@@ -20,6 +16,7 @@ The workflow includes:
 - Power Spectral Density estimation using Welch’s method
 - Random Forest Regression modeling
 - Model evaluation using train–test split and 10-fold cross-validation
+- Statistical validation using baseline comparison and paired t-tests
 
 ---
 
@@ -27,8 +24,8 @@ The workflow includes:
 
 - `preprocessing/` – EEG cleaning and preparation scripts  
 - `feature_extraction/` – Time- and frequency-domain feature computation  
-- `modeling/` – Random Forest training, validation, and comparison with baseline models  
-- `utils/` – Helper functions and visualization utilities  
+- `modeling/` – Random Forest training, validation, and baseline comparison  
+- `visualization/` – Cortical region mapping and result visualization utilities  
 
 ---
 
@@ -41,13 +38,27 @@ The dataset used in this study is publicly available from PhysioNet:
 Shafiei, S. B., et al. (2023). *Electroencephalogram and eye-gaze datasets for robot-assisted surgery performance evaluation* (version 1.0.0).  
 PhysioNet. https://doi.org/10.13026/qj5m-n649
 
-Users must comply with PhysioNet’s data usage requirements.
+Users must comply with PhysioNet’s data usage, citation, and ethical requirements.
 
 ---
 
-## Requirements
+## Installation
 
 Install dependencies using:
 
 ```bash
 pip install -r requirements.txt
+
+
+
+---
+
+**Mohammed Atheef G A**  
+Department of Biomedical Engineering  
+Manipal Institute of Technology, Manipal, MAHE  
+Email: mohammed.atheef@learner.manipal.edu
+
+**Omkar S Powar** (Corresponding Author)  
+Department of Biomedical Engineering  
+Manipal Institute of Technology, Mnaipal MAHE  
+Email: omkar.powar@manipal.edu

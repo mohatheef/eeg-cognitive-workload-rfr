@@ -68,3 +68,63 @@ Atheef, M. G. A., & Powar, O. S. (2026).
 Estimating cognitive workload in robot-assisted surgery using time and frequency features from EEG epochs with random forest regression.
 Scientific Reports.
 https://doi.org/10.1038/s41598-026-35986-5
+
+
+
+Authors
+Mohammed Atheef G A
+Department of Biomedical Engineering
+Manipal Institute of Technology
+Manipal Academy of Higher Education (MAHE), India
+Email: mohammed.atheef@learner.manipal.edu
+Dr. Omkar S. Powar (Corresponding Author)
+Department of Biomedical Engineering
+Manipal Institute of Technology
+Manipal Academy of Higher Education (MAHE), India
+Email: omkar.powar@manipal.edu
+
+
+
+License
+This project is intended for academic and research use.
+Please cite the associated publication when using or adapting this work.
+
+
+
+---
+
+## 2️⃣ `CITATION.cff` (HIGHLY RECOMMENDED)
+
+Create a file named **`CITATION.cff`** in the root of your repo:
+
+```yaml
+cff-version: 1.2.0
+title: "EEG-Based Cognitive Workload Estimation using Random Forest Regression"
+message: "If you use this software, please cite the associated Scientific Reports article."
+authors:
+  - family-names: Atheef
+    given-names: Mohammed
+  - family-names: Powar
+    given-names: Omkar S.
+doi: 10.1038/s41598-026-35986-5
+journal: Scientific Reports
+year: 2026
+url: https://www.nature.com/articles/s41598-026-35986-5
+
+
+
+MIT License
+
+Copyright (c) 2026 Mohammed Atheef G A
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+

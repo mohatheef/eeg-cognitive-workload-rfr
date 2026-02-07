@@ -29,8 +29,11 @@ The proposed pipeline includes:
 ## Repository Structure
 
 preprocessing/        EEG filtering, referencing, ICA artifact removal
+
 feature_extraction/  Time-domain and frequency-domain feature computation
+
 modeling/             Random Forest training, validation, and benchmarking
+
 visualization/        Topographic maps, spectrograms, and performance plots
 
 

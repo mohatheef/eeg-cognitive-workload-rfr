@@ -69,19 +69,17 @@ Estimating cognitive workload in robot-assisted surgery using time and frequency
 Scientific Reports.
 https://doi.org/10.1038/s41598-026-35986-5
 
-
-
 Authors
 Mohammed Atheef G A
 Department of Biomedical Engineering
 Manipal Institute of Technology
 Manipal Academy of Higher Education (MAHE), India
-Email: mohammed.atheef@learner.manipal.edu
+
 Dr. Omkar S. Powar (Corresponding Author)
 Department of Biomedical Engineering
 Manipal Institute of Technology
 Manipal Academy of Higher Education (MAHE), India
-Email: omkar.powar@manipal.edu
+
 
 
 
@@ -91,21 +89,6 @@ Please cite the associated publication when using or adapting this work.
 
 
 
----
-
-## 2️⃣ `CITATION.cff` (HIGHLY RECOMMENDED)
-
-Create a file named **`CITATION.cff`** in the root of your repo:
-
-```yaml
-cff-version: 1.2.0
-title: "EEG-Based Cognitive Workload Estimation using Random Forest Regression"
-message: "If you use this software, please cite the associated Scientific Reports article."
-authors:
-  - family-names: Atheef
-    given-names: Mohammed
-  - family-names: Powar
-    given-names: Omkar S.
 doi: 10.1038/s41598-026-35986-5
 journal: Scientific Reports
 year: 2026

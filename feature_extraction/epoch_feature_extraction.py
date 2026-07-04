@@ -18,25 +18,11 @@ Note:
 """
 
 import os
+import argparse
 import numpy as np
 import pandas as pd
 from scipy.signal import welch
 from tqdm import tqdm
-
-
-# =========================
-# USER-DEFINED PARAMETERS
-# =========================
-
-# Path to directory containing preprocessed EEG CSV files
-INPUT_DIR = "PATH_TO_PREPROCESSED_CSV"
-
-# Output feature file
-OUTPUT_FILE = "PATH_TO_OUTPUT/epoch_features.csv"
-
-# Epoch configuration
-EPOCH_LENGTH_SEC = 1      # seconds
-SAMPLING_RATE_HZ = 128    # Hz
 
 
 # =========================
@@ -56,7 +42,7 @@ def extract_time_features(epoch: np.ndarray) -> dict:
 
 
 def extract_frequency_features(epoch: np.ndarray,
-                              sampling_rate: int) -> dict:
+                               sampling_rate: int) -> dict:
     """Extract frequency-domain features using Welch PSD."""
     freqs, psd = welch(
         epoch,
@@ -73,70 +59,146 @@ def extract_frequency_features(epoch: np.ndarray,
     }
 
 
+def map_channel_to_cortical_area(channel_name: str) -> str:
+    """Map standard 10-5/10-10 channel names to cortical regions."""
+    ch = channel_name.upper().replace("EEG", "").replace("-", "").strip()
+
+    # Exclude EOG channels
+    if any(eog in ch for eog in ["EOG", "HEOG", "VEOG"]):
+        return None
+
+    # Prefix-based mapping rules derived from the 10-5 standard layout
+    if ch.startswith("FT"):
+        return "Temporal"
+    elif ch.startswith("FC"):
+        return "Frontal"
+    elif ch.startswith("CP"):
+        return "Parietal"
+    elif ch.startswith("FP"):
+        return "Frontal"
+    elif ch.startswith("AF"):
+        return "Frontal"
+    elif ch.startswith("F"):
+        return "Frontal"
+    elif ch.startswith("C"):
+        return "Frontal"  # Grouping Central channels under Frontal
+    elif ch.startswith("TP") or ch.startswith("T"):
+        return "Temporal"
+    elif ch.startswith("PO"):
+        return "Occipital"
+    elif ch.startswith("P"):
+        return "Parietal"
+    elif ch.startswith("O") or ch.startswith("I"):
+        return "Occipital"
+    return None
+
+
 # =========================
 # MAIN PROCESSING
 # =========================
 
-all_features = []
+def main():
+    parser = argparse.ArgumentParser(
+        description="Epoch-Based EEG Feature Extraction"
+    )
+    parser.add_argument(
+        "--input_dir",
+        type=str,
+        default="data/preprocessed_csv",
+        help="Path to directory containing preprocessed EEG CSV files"
+    )
+    parser.add_argument(
+        "--output_file",
+        type=str,
+        default="data/features/epoch_features.csv",
+        help="Path to save the generated epoch features CSV file"
+    )
+    parser.add_argument(
+        "--epoch_len",
+        type=float,
+        default=1.0,
+        help="Epoch duration in seconds"
+    )
+    parser.add_argument(
+        "--sfreq",
+        type=int,
+        default=128,
+        help="Sampling rate in Hz"
+    )
+    args = parser.parse_args()
 
-print("Extracting epoch-based EEG features...")
+    INPUT_DIR = args.input_dir
+    OUTPUT_FILE = args.output_file
+    EPOCH_LENGTH_SEC = args.epoch_len
+    SAMPLING_RATE_HZ = args.sfreq
 
-for file_name in tqdm(os.listdir(INPUT_DIR)):
+    if not os.path.exists(INPUT_DIR):
+        print(f"Error: Input folder '{INPUT_DIR}' does not exist.")
+        return
 
-    if not file_name.lower().endswith(".csv"):
-        continue
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
 
-    file_path = os.path.join(INPUT_DIR, file_name)
+    all_features = []
+    file_list = sorted([f for f in os.listdir(INPUT_DIR) if f.lower().endswith(".csv")])
 
-    try:
-        # Load EEG data
-        data = pd.read_csv(file_path)
+    if not file_list:
+        print(f"No preprocessed CSV files found in '{INPUT_DIR}'.")
+        return
 
-        # Basic validation
-        if data.shape[1] < 4:
-            raise ValueError(
-                f"{file_name} contains fewer than 4 channels. Skipping."
-            )
+    print("Extracting epoch-based EEG features...")
 
-        # Process each channel independently
-        for channel in data.columns:
+    for file_name in tqdm(file_list, desc="Processing CSV files"):
+        file_path = os.path.join(INPUT_DIR, file_name)
 
-            signal = data[channel].values
-            samples_per_epoch = int(EPOCH_LENGTH_SEC * SAMPLING_RATE_HZ)
-            n_epochs = len(signal) // samples_per_epoch
+        try:
+            # Load EEG data
+            data = pd.read_csv(file_path)
 
-            for epoch_idx in range(n_epochs):
+            # Process each channel independently
+            for channel in data.columns:
+                # Map channel name to cortical region
+                cortical_area = map_channel_to_cortical_area(channel)
+                if cortical_area is None:
+                    continue  # Skip EOG or unmapped channels
 
-                epoch = signal[
-                    epoch_idx * samples_per_epoch:
-                    (epoch_idx + 1) * samples_per_epoch
-                ]
+                signal = data[channel].values
+                samples_per_epoch = int(EPOCH_LENGTH_SEC * SAMPLING_RATE_HZ)
+                n_epochs = len(signal) // samples_per_epoch
 
-                time_feats = extract_time_features(epoch)
-                freq_feats = extract_frequency_features(
-                    epoch,
-                    SAMPLING_RATE_HZ
-                )
+                for epoch_idx in range(n_epochs):
+                    epoch = signal[
+                        epoch_idx * samples_per_epoch:
+                        (epoch_idx + 1) * samples_per_epoch
+                    ]
 
-                features = {
-                    **time_feats,
-                    **freq_feats,
-                    "channel": channel,
-                    "epoch": epoch_idx,
-                    "source_file": file_name
-                }
+                    time_feats = extract_time_features(epoch)
+                    freq_feats = extract_frequency_features(
+                        epoch,
+                        SAMPLING_RATE_HZ
+                    )
 
-                all_features.append(features)
+                    features = {
+                        **time_feats,
+                        **freq_feats,
+                        "channel": channel,
+                        "cortical_area": cortical_area,
+                        "epoch": epoch_idx,
+                        "source_file": file_name
+                    }
 
-    except Exception as err:
-        print(f"Error processing {file_name}: {err}")
+                    all_features.append(features)
+
+        except Exception as err:
+            print(f"Error processing {file_name}: {err}")
+
+    # Save features if extracted
+    if all_features:
+        features_df = pd.DataFrame(all_features)
+        features_df.to_csv(OUTPUT_FILE, index=False)
+        print(f"Feature extraction completed. Saved to: {OUTPUT_FILE}")
+    else:
+        print("No features extracted.")
 
 
-# =========================
-# SAVE FEATURES
-# =========================
-
-features_df = pd.DataFrame(all_features)
-features_df.to_csv(OUTPUT_FILE, index=False)
-
-print(f"Feature extraction completed. Saved to: {OUTPUT_FILE}")
+if __name__ == "__main__":
+    main()
